@@ -2,18 +2,19 @@
 
 In this hands-on session, you will learn how to write a gadget that collects
 statistics about TCP connections. In particular, the gadget should keep track of
-the number of bytes sent and received by each TCP connection.
+the number of bytes sent and received by each TCP container.
 
 For time constraints, we will provide you with a gadget that is almost complete
 and your task is to have fun completing it!
 
 ## Environment setup
 
-TODO: Add instructions to set up the environment.
+We prepared a set of virtual machines with all the dependencies ready for this
+contribfest. We'll give you instruction on the section to connec to them.
 
 ## Walking through the eBPF code
 
-The eBPF code is available in the `task/program.bfp.c` file. Let's walk
+The eBPF code is available in the `task/program.bpf.c` file. Let's walk
 through it to understand what it does:
 
 - [Data source and map definition](#data-source-and-map-definition)
@@ -158,8 +159,8 @@ the TCP and process information, so you only need to complete the code that
 stores the bytes sent or received in the map. To do that, you can use the bpf
 helper functions:
 
-- `bpf_map_lookup_elem`: (TODO: Link to documentation)
-- `bpf_map_update_elem`: (TODO: Link to documentation)
+- [`bpf_map_lookup_elem`](https://docs.ebpf.io/linux/helper-function/bpf_map_lookup_elem/): Perform a lookup in map for an entry associated to key.
+- [`bpf_map_update_elem`](https://docs.ebpf.io/linux/helper-function/bpf_map_update_elem/): Update values in a map.
 - TODO: Others?
 
 Let's code!

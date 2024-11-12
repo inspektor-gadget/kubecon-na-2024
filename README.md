@@ -1,6 +1,6 @@
 # Contribfest: Enhancing Kubernetes Debugging and Observability with Inspektor Gadget
 
-This is the repository contains all the resources for the Contribfest session on
+This is repository contains all the resources for the Contribfest session on
 enhancing Kubernetes debugging and observability with Inspektor Gadget.
 
 ## Slides
