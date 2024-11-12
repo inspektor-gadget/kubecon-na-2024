@@ -98,12 +98,27 @@ struct value_t {
 Given that we want to compute sent and receive bytes statistics per TCP
 connections, these are the hooks the gadget will use:
 
-- `kprobe/tcp_sendmsg`: TODO: Explain parameters and add a link to documentation
-- `kprobe/tcp_cleanup_rbuf`: TODO: Explain parameters and add a link to
-  documentation. Note that `tcp_recvmsg` would be obvious to trace, but is less
-  suitable because:
-  - We'd need to trace both entry and return, to have both sock and size.
-  - Misses tcp_read_sock() traffic.
+- [kprobe/tcp_sendmsg](https://github.com/torvalds/linux/blob/14b6320953a3f856a3f93bf9a0e423395baa593d/net/ipv4/tcp.c#L1352):
+  Function in charge of [sending TCP
+  data](https://github.com/torvalds/linux/blob/14b6320953a3f856a3f93bf9a0e423395baa593d/net/ipv4/tcp_ipv4.c#L3360).
+  It receives the following parameters:
+  - [struct sock *sk](https://linux-kernel-labs.github.io/refs/heads/master/labs/networking.html#the-struct-sock-structure): The network layer representation of the socket.
+    the kernel documentation.
+  - `struct msghdr *msg`: The message to send.
+  - `size_t size`: The number of bytes to send.
+- [kprobe/tcp_cleanup_rbuf](https://github.com/torvalds/linux/blob/14b6320953a3f856a3f93bf9a0e423395baa593d/net/ipv4/tcp.c#L1508):
+  Function in charge of cleaning up the receive buffer for full TCP frames taken
+  by the user. It receives the following parameters:
+  - [struct sock *sk](https://linux-kernel-labs.github.io/refs/heads/master/labs/networking.html#the-struct-sock-structure): The network layer representation of the socket.
+  - `int copied`: The number of bytes copied to the user.
+
+  Notice that we are not using `tcp_recvmsg` to track received bytes for two
+  reasons:
+  - We would need to trace both entry and return, to have both sock and size.
+  - We would miss traffic sent with
+    [tcp_read_sock()](https://github.com/torvalds/linux/blob/14b6320953a3f856a3f93bf9a0e423395baa593d/net/ipv4/tcp.c#L1556-L1567),
+    which offers significant performance benefits to applications such as `ftp`
+    and web servers that need to efficiently transfer files.
 
 ### Programs
 
@@ -161,7 +176,6 @@ helper functions:
 
 - [`bpf_map_lookup_elem`](https://docs.ebpf.io/linux/helper-function/bpf_map_lookup_elem/): Perform a lookup in map for an entry associated to key.
 - [`bpf_map_update_elem`](https://docs.ebpf.io/linux/helper-function/bpf_map_update_elem/): Update values in a map.
-- TODO: Others?
 
 Let's code!
 
