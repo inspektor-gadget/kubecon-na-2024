@@ -25,8 +25,9 @@ through it to understand what it does:
 When computing statistics, we don't want to generate a stream of events every
 time a TCP connection sends or receives data. Instead, it's more efficient to
 keep statistics on kernel side and only copy them to user space periodically. To
-achieve that, we define a Map Iterator data source (TODO: LINK) to make
-Inspektor Gadget pull periodically those values:
+achieve that, we define a
+[Map Iterator data source](https://inspektor-gadget.io/docs/latest/gadget-devel/gadget-intro#map-iterators)
+to make Inspektor Gadget pull periodically those values:
 
 ```c
 struct {
@@ -66,20 +67,18 @@ Let's see some of the benefits of using `gadget_*` types:
 
 - In case the process sending/receiving TCP traffic is running within a
   container, adding the mount namespace ID to the key, with type
-  `gadget_mntns_id`, will make Inspektor Gadget to automatically enrich those
-  statistics with the corresponding container metadata. (TODO: LINK):
-
-  TODO: Add how it looks
-
-- Using struct `gadget_l4endpoint_t` will improve the way this information is
-  displayed in the CLI and, in case we run the gadget in Kubernetes and the
-  address correspond to a pod or service, Inspektor Gadget will show the
-  pod/service name instead of the raw address, see (TODO: LINK):
-
-  TODO: Add how it looks
-
+  [gadget_mntns_id](https://inspektor-gadget.io/docs/latest/gadget-devel/gadget-ebpf-api#gadget_mntns_id-and-gadget_netns_id),
+  will make Inspektor Gadget to automatically enrich those statistics
+  with the corresponding container metadata.
+- Using
+  [struct gadget_l4endpoint_t](https://inspektor-gadget.io/docs/latest/gadget-devel/gadget-ebpf-api#struct-gadget_l4endpoint_t)
+  will improve the way this information is displayed in the CLI and, in
+  case we run the gadget in Kubernetes and the address correspond to a
+  pod or service, Inspektor Gadget will show the pod/service name instead
+  of the raw address.
 - In general, using `gadget_*` types will improve the UX and provide several
-  features for free, see (TODO: LINK).
+  features for free, see [Enriched types](https://inspektor-gadget.io/docs/latest/gadget-devel/gadget-ebpf-api#enriched-types)
+  for further information.
 
 ### Map value
 
