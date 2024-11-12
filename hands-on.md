@@ -111,8 +111,47 @@ To have the context of when the programs are executed and what they should do,
 let's see the interaction between a process sending and receiving TCP traffic,
 the hooks, the programs and the map:
 
-TODO: Add mermaid diagram with interaction between tracee, hook, programs and
-maps and Inspektor Gadget iterating over maps.
+```mermaid
+sequenceDiagram
+    participant Process
+    participant Kernel
+    participant ig_tcp_send
+    participant ig_tcp_send
+    participant BPF Map
+    participant Inspektor Gadget
+    participant User
+
+    activate Inspektor Gadget
+    Inspektor Gadget ->> BPF Map: 
+    Note left of Inspektor Gadget: Get stats 
+    BPF Map ->> Inspektor Gadget: 
+    Inspektor Gadget ->> User: 
+    Note over User: Empty stats
+
+    activate Process
+    Process ->> Kernel: send()
+    Kernel ->> Kernel: tcp_sendmsg()
+    Note over Kernel: Hook is reached:<br/>kprobe/tcp_sendmsg
+    Kernel ->> ig_tcp_send: 
+    Note over ig_tcp_send: Collect sent bytes and<br/>TCP and process info 
+
+    rect rgba(0, 0, 255, .1)
+        ig_tcp_send ->> BPF Map: 
+        Note right of ig_tcp_send: Task: Update stats
+        BPF Map ->> ig_tcp_send: 
+    end
+
+    ig_tcp_send ->> Kernel: 
+    Note over Kernel: Resume execution of tcp_sendmsg<br/>and send TCP data
+    Kernel ->> Process: 
+    deactivate Process
+
+    Inspektor Gadget ->> BPF Map: 
+    Note left of Inspektor Gadget: Get stats
+    BPF Map ->> Inspektor Gadget: 
+    Inspektor Gadget ->> User: 
+    Note over User: Sent stats available
+```
 
 The goal of those two programs is to get the TCP and process information and
 store the statistics in the map. We already provide you with the code that get
