@@ -13,7 +13,7 @@ TODO: Add instructions to set up the environment.
 
 ## Walking through the eBPF code
 
-The eBPF code is available in the `gadget/program.bfp.c` file. Let's walk
+The eBPF code is available in the `task/program.bfp.c` file. Let's walk
 through it to understand what it does:
 
 - [Data source and map definition](#data-source-and-map-definition)
@@ -39,7 +39,7 @@ struct {
 GADGET_MAPITER(tcp, stats);
 ```
 
-Now, let's see what information the [key](map-key) and [value](map-value)
+Now, let's see what information the [key](#map-key) and [value](#map-value)
 structs contain.
 
 ### Map key

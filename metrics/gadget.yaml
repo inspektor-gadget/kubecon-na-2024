@@ -1,0 +1,25 @@
+name: tcp
+description: Periodically report tcp send receive activity
+homepageURL: https://github.com/inspektor-gadget/kubecon-na-2024/
+documentationURL: https://github.com/inspektor-gadget/kubecon-na-2024/blob/master/metrics/README.md
+sourceURL: https://github.com/inspektor-gadget/kubecon-na-2024/blob/master/metrics/
+datasources:
+  tcp:
+    annotations:
+      cli.clear-screen-before: "true"
+      metrics.collect: "true"
+    fields:
+      comm:
+        annotations:
+          metrics.type: key
+      runtime.containerName:
+        annotations:
+          metrics.type: key
+      received:
+        annotations:
+          metrics.type: counter
+          description: Received bytes
+      sent:
+        annotations:
+          metrics.type: counter
+          description: Sent bytes
