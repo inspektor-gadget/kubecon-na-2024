@@ -12,7 +12,13 @@ datasources:
       comm:
         annotations:
           metrics.type: key
-      runtime.containerName:
+      k8s.namespace:
+        annotations:
+          metrics.type: key
+      k8s.podName:
+        annotations:
+          metrics.type: key
+      k8s.containerName:
         annotations:
           metrics.type: key
       received:
