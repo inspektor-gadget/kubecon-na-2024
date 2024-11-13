@@ -10,7 +10,7 @@ and your task is to have fun completing it!
 ## Environment setup
 
 We prepared a set of virtual machines with all the dependencies ready for this
-contribfest. We'll give you instruction on the section to connec to them.
+contribfest. We'll give you instruction on the section to connect to them.
 
 ## Walking through the eBPF code
 
@@ -99,11 +99,8 @@ Given that we want to compute sent and receive bytes statistics per TCP
 connections, these are the hooks the gadget will use:
 
 - [kprobe/tcp_sendmsg](https://github.com/torvalds/linux/blob/14b6320953a3f856a3f93bf9a0e423395baa593d/net/ipv4/tcp.c#L1352):
-  Function in charge of [sending TCP
-  data](https://github.com/torvalds/linux/blob/14b6320953a3f856a3f93bf9a0e423395baa593d/net/ipv4/tcp_ipv4.c#L3360).
-  It receives the following parameters:
+  Function in charge of sending TCP data. It receives the following parameters:
   - [struct sock *sk](https://linux-kernel-labs.github.io/refs/heads/master/labs/networking.html#the-struct-sock-structure): The network layer representation of the socket.
-    the kernel documentation.
   - `struct msghdr *msg`: The message to send.
   - `size_t size`: The number of bytes to send.
 - [kprobe/tcp_cleanup_rbuf](https://github.com/torvalds/linux/blob/14b6320953a3f856a3f93bf9a0e423395baa593d/net/ipv4/tcp.c#L1508):
@@ -114,7 +111,7 @@ connections, these are the hooks the gadget will use:
 
   Notice that we are not using `tcp_recvmsg` to track received bytes for two
   reasons:
-  - We would need to trace both entry and return, to have both sock and size.
+  - We would need to trace both entry and return, to have both sock struct and size.
   - We would miss traffic sent with
     [tcp_read_sock()](https://github.com/torvalds/linux/blob/14b6320953a3f856a3f93bf9a0e423395baa593d/net/ipv4/tcp.c#L1556-L1567),
     which offers significant performance benefits to applications such as `ftp`
@@ -148,9 +145,8 @@ sequenceDiagram
     Kernel ->> Kernel: tcp_sendmsg()
     Note over Kernel: Hook is reached:<br/>kprobe/tcp_sendmsg
     Kernel ->> ig_tcp_send: 
-    Note over ig_tcp_send: Collect sent bytes and<br/>TCP and process info 
-
     rect rgba(0, 0, 255, .1)
+        Note over ig_tcp_send: Collect sent bytes and<br/>TCP and process info
         ig_tcp_send ->> BPF Map: 
         Note right of ig_tcp_send: Task: Update stats
         BPF Map ->> ig_tcp_send: 
