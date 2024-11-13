@@ -180,22 +180,34 @@ Let's code!
 To test your code, you can build the gadget by running this command:
 
 ```bash
-ig image build -t tcp:latest .
+ig image build -t ttl.sh/tcp:2h .
 ```
 
 For your information,
 [here](https://www.inspektor-gadget.io/docs/latest/gadget-devel/building) the full
 documentation on how to build a gadget.
 
-## Running your gadget
+## Running your gadget in Kubernetes
 
-You can your gadget by running:
+In order to be able to run your gadget in Kubernetes, you need to push it to a
+container registry. You can do that by pushing the image to the ttl.sh registry
+which doesn't require authentication:
 
 ```bash
-TODO: Add command
+ig image push ttl.sh/tcp:1d
 ```
 
-For your information, [here](https://www.inspektor-gadget.io/docs/latest/reference/run) the full documentation on how to run a gadget.
+TODO: Let people know that they need to use an unique ID.
+
+You can run your gadget by running:
+
+```bash
+kubectl gadget run ttl.sh/tcp:1d
+```
+
+Check our official documentation for further information about
+[running](https://www.inspektor-gadget.io/docs/latest/reference/run) gadgets in
+Kubernetes.
 
 ## Solution
 
