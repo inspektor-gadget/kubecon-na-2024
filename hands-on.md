@@ -267,11 +267,31 @@ The code to complete the gadget could look like this:
   }
 ```
 
-Run the gadget again and check the output:
+Run the gadget again and check the output: Notice the `--pull always` flag that
+will make the gadget to pull the latest image from the registry.
 
 ```bash
-TODO: Add output
+$ kubectl gadget run ttl.sh/$UUID/tcp-gadget:latest -A --pull always
+K8S.NODE                       K8S.NAMESPACE                  K8S.PODNAME                    K8S.CONTAINERNAME                           PID              TID COMM             SRC              DST              SENT             RECEIVED
+K8S.NODE                       K8S.NAMESPACE                  K8S.PODNAME                    K8S.CONTAINERNAME                           PID              TID COMM             SRC              DST              SENT             RECEIVED
+minikube                       kube-system                    etcd-minikube                  etcd                                       5878             5929 etcd             127.0.0.1:2379   127.0.0.1:60062  65               0
+minikube                       kube-system                    kube-apiserver-minikube        kube-apiserver                             5830             5911 kube-apiserver   127.0.0.1:60376  127.0.0.1:2379   0                39
+minikube                       kube-system                    kube-controller…nager-minikube kube-controller-manager                    5848             6161 kube-controller  192.168.49.2:55… 192.168.49.2:84… 0                671
+minikube                       kube-system                    etcd-minikube                  etcd                                       5878             5929 etcd             127.0.0.1:2379   127.0.0.1:60022  0                129
+minikube                       kube-system                    coredns-6f6b679f8f-xc982       coredns                                    6487             6504 coredns          127.0.0.1:45506  127.0.0.1:8080   92               118
+minikube                       kube-system                    etcd-minikube                  etcd                                       5878             5929 etcd             127.0.0.1:2379   127.0.0.1:60248  39               52
+minikube                       kube-system                    kube-apiserver-minikube        kube-apiserver                             5830             5956 kube-apiserver   127.0.0.1:60022  127.0.0.1:2379   52               2103
+minikube                       kube-system                    kube-apiserver-minikube        kube-apiserver                             5830             5903 kube-apiserver   127.0.0.1:59956  127.0.0.1:2379   0                65
+minikube                       monitoring                     prometheus-569cc664c8-tmjd4    prometheus                                15921            15939 prometheus       p/monitoring/pr… p/gadget/gadget… 0                2369
+minikube                       kube-system                    kube-apiserver-minikube        kube-apiserver                             5830             5901 kube-apiserver   127.0.0.1:60268  127.0.0.1:2379   0                39
+minikube                       kube-system                    kube-apiserver-minikube        kube-apiserver                             5830             5901 kube-apiserver   127.0.0.1:59996  127.0.0.1:2379   52               0
+minikube                       kube-system                    kube-apiserver-minikube        kube-apiserver                             5830             5956 kube-apiserver   127.0.0.1:60268  127.0.0.1:2379   52               0
+minikube                       kube-system                    etcd-minikube                  etcd                                       5878             5953 etcd             127.0.0.1:2379   127.0.0.1:60268  39               0
+minikube                       kube-system                    kube-apiserver-minikube        kube-apiserver                             5830             5911 kube-apiserver   127.0.0.1:59956  127.0.0.1:2379   0                39
+minikube                       kube-system                    kube-apiserver-minikube        kube-apiserver                             5830             5911 kube-apiserver   127.0.0.1:59914  127.0.0.1:2379   52               0
 ```
+
+## Enabling your gadget to export metrics
 
 ## Bringing home your work
 
