@@ -12,6 +12,12 @@ and your task is to have fun completing it!
 We prepared a set of virtual machines with all the dependencies ready for this
 contribfest. We'll give you instruction on the section to connect to them.
 
+The environment has:
+- A running minikube cluster deployed
+- `ig` and `kubectl gadget` binaries installed to handle gadgets
+- Inspektor Gadget deployed to the cluster
+- Prometheus and Grafana deployed to the cluster
+
 ## Walking through the eBPF code
 
 The eBPF code is available in the `task/program.bpf.c` file. Let's walk
@@ -175,12 +181,24 @@ helper functions:
 
 Let's code!
 
+## Generating an UUID for our gadget
+
+We'll using ttl.sh to push our gadget to a container registry. Let's generate an
+uuid for our gadget to avoid colliding with other folks.
+
+:alert:
+
+This is only needed because we're using ttl.sh to ease this contribfest. If you
+are pushing to your own registry you won't need it.
+
+UUID=$(uuidgen)
+
 ## Building your gadget
 
 To test your code, you can build the gadget by running this command:
 
 ```bash
-ig image build -t ttl.sh/tcp:2h .
+sudo -E ig image build . -t ttl.sh/$UUID/tcp-gadget:latest
 ```
 
 For your information,
@@ -194,7 +212,7 @@ container registry. You can do that by pushing the image to the ttl.sh registry
 which doesn't require authentication:
 
 ```bash
-ig image push ttl.sh/tcp:1d
+sudo -E ig image push ttl.sh/$UUID/tcp-gadget:latest
 ```
 
 TODO: Let people know that they need to use an unique ID.
@@ -202,8 +220,12 @@ TODO: Let people know that they need to use an unique ID.
 You can run your gadget by running:
 
 ```bash
-kubectl gadget run ttl.sh/tcp:1d
+kubectl gadget run ttl.sh/$UUID/tcp-gadget:latest
 ```
+
+As you can see, the gadget is not complete yet as it's not printing any output.
+Your task is to fix the `/* TODO: Add code for adding these new values to the
+map */` in the gadget.
 
 Check our official documentation for further information about
 [running](https://www.inspektor-gadget.io/docs/latest/reference/run) gadgets in
