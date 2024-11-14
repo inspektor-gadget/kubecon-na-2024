@@ -1,6 +1,6 @@
 # Using Gadgets
 
-This guide will tech you how to run some Gadgets from Inspektor Gadget. 
+This guide will teach you how to run some Gadgets from Inspektor Gadget. 
 
 ## trace_exec
 
@@ -97,7 +97,7 @@ This guide shows how to collect metrics from tracer gadgets.
 kubectl gadget run -f 1-alerts/alert-bad-process.yaml --detach 
 ```
 
-Go to https://YOUR_VM_IP:9090 and look for the shell_executions process.
+Go to http://YOUR_VM_IP:9090 and look for the shell_executions process.
 
 ### Network latency 
 
@@ -107,5 +107,5 @@ Let's use the tcp_rtt gadget to collect network latency metrics.
 kubectl gadget run -f 2-latency/network-latency.yaml --detach
 ```
 
-Go to grafana at https://YOUR_VM_IP:3000 and create a dashboard as explained on
+Go to grafana at http://YOUR_VM_IP:3000 and create a dashboard as explained on
 the presentation.  
