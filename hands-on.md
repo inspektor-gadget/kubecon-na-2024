@@ -219,9 +219,7 @@ which doesn't require authentication:
 sudo -E ig image push ttl.sh/$UUID/tcp-gadget:latest
 ```
 
-TODO: Let people know that they need to use an unique ID.
-
-You can run your gadget by running:
+You can run your gadget by using:
 
 ```bash
 kubectl gadget run ttl.sh/$UUID/tcp-gadget:latest
@@ -304,29 +302,29 @@ counters. To do that you need to do the following changes to the metadata file:
 
 - Set the `metrics.collect` annotation to `"true"` for the data source:
 
-    ```yaml
-    datasources:
-      myDataSource:
-        annotations:
-          metrics.collect: "true"
-    ```
+```yaml
+datasources:
+  tcp:
+    annotations:
+      metrics.collect: "true"
+```
 
 - Set the `metrics.type` annotation to `counter` for the `received` and `sent`
   fields. And, set the `metrics.type` annotation to `key` for the fields we want
-  to be able to filter by the metrics, such as `comm` or `pid`. This is an
-  example of how to annotate the fields:
+  to use as labels for the metrics, such as `comm`. This is an example of how to
+  annotate the fields:
 
-    ```yaml
-    datasources:
-      myDataSource:
+```yaml
+datasources:
+  tcp:
+    annotations:
+      [...]
+    fields:
+      myField: # Replace myField with the field you want to annotate
         annotations:
-          [...]
-        fields:
-          myField:
-            annotations:
-              metrics.type: [counter|key]
-              description: My field description
-    ```
+          metrics.type: counter # use key for the ones you want to use as labels
+          description: My field description
+```
 
   Notice you can also use as `key` the fields Inspektor Gadget provides for free
   such as `k8s.namespace`, `k8s.podName` or `k8s.containerName`. To check what
@@ -393,5 +391,5 @@ datasources:
 If you have a Linux host, you want to keep a copy of the gadget you created by running:
 
 ```bash
-TODO:  scp <IP>@<user>:/path/to/code /local/destination/path
+scp iguser@<VM_IP>:/home/iguser/kubecon-na-2024 /local/destination/path
 ```
