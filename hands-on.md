@@ -13,6 +13,7 @@ We prepared a set of virtual machines with all the dependencies ready for this
 contribfest. We'll give you instruction on the section to connect to them.
 
 The environment has:
+
 - A running minikube cluster deployed
 - `ig` and `kubectl gadget` binaries installed to handle gadgets
 - Inspektor Gadget deployed to the cluster
@@ -124,11 +125,6 @@ connections, these are the hooks the gadget will use:
     and web servers that need to efficiently transfer files.
 
 ### Programs
-
-To have the context of when the programs are executed and what they should do,
-let's see the interaction between a process sending and receiving TCP traffic,
-the hooks, the programs and the map:
-
 
 The following diagram shows the sequence of events when a TCP connection sends
 data:
