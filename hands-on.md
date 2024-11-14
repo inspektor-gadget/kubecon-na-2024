@@ -2,7 +2,7 @@
 
 In this hands-on session, you will learn how to write a gadget that collects
 statistics about TCP connections. In particular, the gadget should keep track of
-the number of bytes sent and received by each TCP container.
+the number of bytes sent and received by each TCP connection.
 
 For time constraints, we will provide you with a gadget that is almost complete
 and your task is to have fun completing it!
@@ -129,6 +129,10 @@ To have the context of when the programs are executed and what they should do,
 let's see the interaction between a process sending and receiving TCP traffic,
 the hooks, the programs and the map:
 
+
+The following diagram shows the sequence of events when a TCP connection sends
+data:
+
 ```mermaid
 sequenceDiagram
     participant Process
@@ -227,11 +231,11 @@ As you can see, the gadget is not complete yet as it's not printing any output.
 Your task is to fix the `/* TODO: Add code for adding these new values to the
 map */` in the gadget.
 
-Check our official documentation for further information about
+Check the official documentation if you want to know more about
 [running](https://www.inspektor-gadget.io/docs/latest/reference/run) gadgets in
 Kubernetes.
 
-## Solution
+## Solution: Completing the gadget
 
 For the solution, you should have considered two cases when storing the
 statistics in the map:
@@ -267,7 +271,7 @@ The code to complete the gadget could look like this:
   }
 ```
 
-Run the gadget again and check the output: Notice the `--pull always` flag that
+Run the gadget again and check the output. Notice the `--pull always` flag that
 will make the gadget to pull the latest image from the registry.
 
 ```bash
@@ -291,12 +295,103 @@ minikube                       kube-system                    kube-apiserver-min
 minikube                       kube-system                    kube-apiserver-minikube        kube-apiserver                             5830             5911 kube-apiserver   127.0.0.1:59914  127.0.0.1:2379   52               0
 ```
 
-## Enabling your gadget to export metrics
+## Exporting metrics
+
+### Configuring the gadget to export metrics
+
+Now, we will export the received and sent bytes statistics to Prometheus as
+counters. To do that you need to do the following changes to the metadata file:
+
+- Set the `metrics.collect` annotation to `"true"` for the data source:
+
+    ```yaml
+    datasources:
+      myDataSource:
+        annotations:
+          metrics.collect: "true"
+    ```
+
+- Set the `metrics.type` annotation to `counter` for the `received` and `sent`
+  fields. And, set the `metrics.type` annotation to `key` for the fields we want
+  to be able to filter by the metrics, such as `comm` or `pid`. This is an
+  example of how to annotate the fields:
+
+    ```yaml
+    datasources:
+      myDataSource:
+        annotations:
+          [...]
+        fields:
+          myField:
+            annotations:
+              metrics.type: [counter|key]
+              description: My field description
+    ```
+
+  Notice you can also use as `key` the fields Inspektor Gadget provides for free
+  such as `k8s.namespace`, `k8s.podName` or `k8s.containerName`. To check what
+  fields are available, you can run `kubectl gadget run
+  ttl.sh/$UUID/tcp-gadget:latest --help` and check the description of the
+  `fields` flag.
+
+### Running the gadget with the metrics enabled
+
+Let's run the gadget with the metrics enabled:
+
+```bash
+kubectl gadget run ttl.sh/$UUID/tcp-gadget:latest --pull always --otel-metrics-name=tcp:tcp-metrics --detach
+```
+
+Notice you need to specify a unique metrics name for the data source using the
+`--otel-metrics-name datasource:metricsname` flag. This is required even if
+datasource and metricsname are the same. This makes sure that you don't export
+metrics by accident and thereby skew existing data as the metricsname will be
+the used as the otel-scope.
+
+## Solution: Exporting metrics
+
+The following is an example of how the metadata file should look like after
+adding the annotations to export the metrics. It uses the `comm`, `k8s.namespace`,
+`k8s.podName`, `k8s.containerName`, as keys:
+
+```yaml
+name: tcp
+description: Periodically report tcp send receive activity
+homepageURL: https://github.com/inspektor-gadget/kubecon-na-2024/
+documentationURL: https://github.com/inspektor-gadget/kubecon-na-2024/blob/master/metrics/README.md
+sourceURL: https://github.com/inspektor-gadget/kubecon-na-2024/blob/master/metrics/
+datasources:
+  tcp:
+    annotations:
+      cli.clear-screen-before: "true"
+      metrics.collect: "true"
+    fields:
+      comm:
+        annotations:
+          metrics.type: key
+      k8s.namespace:
+        annotations:
+          metrics.type: key
+      k8s.podName:
+        annotations:
+          metrics.type: key
+      k8s.containerName:
+        annotations:
+          metrics.type: key
+      received:
+        annotations:
+          metrics.type: counter
+          description: Received bytes
+      sent:
+        annotations:
+          metrics.type: counter
+          description: Sent bytes
+```
 
 ## Bringing home your work
 
 If you have a Linux host, you want to keep a copy of the gadget you created by running:
 
 ```bash
-TODO:  scp IP@user:/blah/blah /local/destination/path
+TODO:  scp <IP>@<user>:/path/to/code /local/destination/path
 ```
